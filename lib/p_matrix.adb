@@ -135,6 +135,8 @@ package body P_Matrix is
    procedure Calcul(Mat, Uni : out TV_Str) is
       I : Integer := 1;
    begin
+      A_La_Ligne;
+      Affiche(Mat, Uni);
       while I <= Mat'Length(2)-1 and then not (Trisup(Mat) and Diago(Mat)) loop
 	 if Floaty(Mat(I, I)) = 0.0 then
 	    GetCand(Mat, Uni, I);
@@ -144,6 +146,8 @@ package body P_Matrix is
 	 end if;
 	 I := I + 1;
       end loop;
+      A_La_Ligne;
+      Affiche(Mat, Uni);
    end;
    
    procedure Dimension(N : out Positive) is

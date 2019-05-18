@@ -20,9 +20,11 @@ begin
 	 end loop;
       end loop;
       A_La_Ligne;
-      Affiche(M, U);
+      Ecrire_Ligne("Matrice de départ :");
+      Affiche(M);
       Calcul(M, U);
       A_La_Ligne;
-      Affiche(M, U);
+      Ecrire_Ligne("Matrice inverse :");
+      Affiche(U);
    end;
 end;
