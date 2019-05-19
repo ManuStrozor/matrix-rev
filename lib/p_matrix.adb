@@ -16,15 +16,19 @@ package body P_Matrix is
       return True;
    end;
    
-   function Diago(Mat : in TV_Str) return Boolean is
-      Q : Positive;
+   function RDiago(Mat : in TV_Str) return Boolean is
    begin
-      if Mat'Length(1) >= Mat'Length(2) then
-	 Q := Mat'Length(2)-1;
-      else
-	 Q := Mat'Length(1);
-      end if;
-      for I in 1..Q loop
+      for I in 1..Mat'Length(1) loop
+	 if Floaty(Mat(I, I)) = 0.0 then
+	    return False;
+	 end if;	    
+      end loop;
+      return True;
+   end;
+   
+   function Diago(Mat : in TV_Str) return Boolean is
+   begin
+      for I in 1..Mat'Length(1) loop
 	 if Floaty(Mat(I, I)) = 0.0 and not LVide(Mat, I) then
 	    return False;
 	 end if;	    
@@ -34,7 +38,7 @@ package body P_Matrix is
    
    function LVide(Mat : in TV_Str; L : in positive) return Boolean is
    begin
-      for I in 1..Mat'last(2)-1 loop
+      for I in 1..Mat'last(2) loop
 	 if Floaty(Mat(L, I)) /= 0.0 then return False; end if;
       end loop;
       return True;
@@ -112,11 +116,12 @@ package body P_Matrix is
    
    procedure DoPivot(Mat, Uni : out TV_Str; Piv : in positive) is
       Coef : T_Str;
+      Useless : Boolean := True;
    begin
       A_La_Ligne;
       for I in Piv..Mat'last(1) loop
 	 if I /= Piv and Floaty(Mat(I, piv)) /= 0.0 then
-	    Coef := GetCoef(Mat(I, Piv), Mat(Piv, Piv));
+	    Coef := Divide(Mat(I, Piv), Mat(Piv, Piv));
 	    for J in Piv..Mat'Last(2) loop
 	       CalcStr(Mat(I, J), Mat(Piv, J), Coef);
 	    end loop;
@@ -124,17 +129,35 @@ package body P_Matrix is
 	       CalcStr(Uni(I, J), Uni(Piv, J), Coef);
 	    end loop;
 	    AfficheEtapes(Coef, I, Piv);
+	    Useless := False;
 	 end if;
       end loop;
-      if not Trisup(Mat) then
+      if not Useless then
 	 A_La_Ligne;
 	 Affiche(Mat, Uni);
       end if;
    end;
    
+   procedure DiagToOne(Mat, Uni : out TV_Str) is
+      Tmp : T_Str;
+   begin
+      for I in 1..Mat'Length(2) loop
+	 Tmp := Mat(I, I);
+	 for J in 1..Mat'Length(1) loop
+	    Mat(I, J) := Divide(Mat(I, J), Tmp);
+	    Uni(I, J) := Divide(Uni(I, J), Tmp);
+	 end loop;
+      end loop;
+      A_La_Ligne;
+      Affiche(Mat, Uni);
+   end;
+   
    procedure Calcul(Mat, Uni : out TV_Str) is
       I : Integer := 1;
    begin
+      A_La_Ligne;
+      Ecrire_Ligne("Matrice de départ :");
+      Affiche(Mat);
       A_La_Ligne;
       Affiche(Mat, Uni);
       while I <= Mat'Length(2)-1 and then not (Trisup(Mat) and Diago(Mat)) loop
@@ -146,8 +169,16 @@ package body P_Matrix is
 	 end if;
 	 I := I + 1;
       end loop;
-      A_La_Ligne;
-      Affiche(Mat, Uni);
+      if not RDiago(Mat) then
+	 A_La_Ligne;
+	 Ecrire_Ligne("La matrice n'est pas inversible !");
+      else
+	 DiagToOne(Mat, Uni);
+	 -- suite
+	 A_La_Ligne;
+	 Ecrire_Ligne("Matrice inverse :");
+	 Affiche(Uni);
+      end if;
    end;
    
    procedure Dimension(N : out Positive) is

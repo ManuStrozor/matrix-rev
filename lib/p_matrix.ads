@@ -7,6 +7,7 @@ package P_Matrix is
    type TV_Str is array(Integer range <>, Integer range <>) of T_Str;
    
    function Trisup(Mat : in TV_Str) return Boolean;
+   function RDiago(Mat : in TV_Str) return Boolean;
    function Diago(Mat : in TV_Str) return Boolean;
    function LVide(Mat : in TV_Str; L : in positive) return Boolean;
    function Max(Mat : in TV_Str) return Integer;
@@ -16,6 +17,7 @@ package P_Matrix is
    procedure CalcStr(Cible : out T_Str; Pivot, Coef : in String);
    procedure GetCand(Mat, Uni : out TV_Str; Piv : in Positive);
    procedure DoPivot(Mat, Uni : out TV_Str; Piv : in positive);
+   procedure DiagToOne(Mat, Uni : out TV_Str);
    procedure Calcul(Mat, Uni : out TV_Str);
    
    procedure Dimension(N : out Positive);

@@ -11,7 +11,7 @@ package P_String is
    function Simp(I1, I2 : in Integer) return String;
    
    -- Calcul --
-   function GetCoef(N, D : in String) return T_Str;
+   function Divide(N, D : in String) return T_Str;
    function Floaty(Str : in String) return Float;
    
    -- Traitement string --

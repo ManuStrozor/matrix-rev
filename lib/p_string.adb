@@ -48,7 +48,7 @@ package body P_String is
    
    -- Calcul --
    
-   function GetCoef(N, D : in String) return T_Str is
+   function Divide(N, D : in String) return T_Str is
       Res : Float := Floaty(N) / Floaty(D);
       S1 : String := Integer'Image(Num(N) * Denum(D));
       S2 : String := Integer'Image(Denum(N) * Num(D));
