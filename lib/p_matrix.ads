@@ -6,6 +6,7 @@ package P_Matrix is
    
    type TV_Str is array(Integer range <>, Integer range <>) of T_Str;
    
+   function Triinf(Mat : in TV_Str) return Boolean;
    function Trisup(Mat : in TV_Str) return Boolean;
    function RDiago(Mat : in TV_Str) return Boolean;
    function Diago(Mat : in TV_Str) return Boolean;
@@ -16,6 +17,7 @@ package P_Matrix is
    procedure Switch_C(Mat : out TV_Str; C1, C2 : in Positive);
    procedure CalcStr(Cible : out T_Str; Pivot, Coef : in String);
    procedure GetCand(Mat, Uni : out TV_Str; Piv : in Positive);
+   procedure UpPivot(Mat, Uni : out TV_Str; Piv : in positive);
    procedure DoPivot(Mat, Uni : out TV_Str; Piv : in positive);
    procedure DiagToOne(Mat, Uni : out TV_Str);
    procedure Calcul(Mat, Uni : out TV_Str);

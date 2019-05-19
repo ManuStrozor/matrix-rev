@@ -1,15 +1,25 @@
 package body P_Matrix is
    
-   function Trisup(Mat : in TV_Str) return Boolean is
-      J, Q : Positive;
+   function Triinf(Mat : in TV_Str) return Boolean is
+      J : Positive;
    begin
-      Q := Min(Mat'Length(1), Mat'Length(2));
+      for I in Mat'Range(1) loop
+	 J := I+1;
+	 while J <= Mat'Length(2) loop
+	    if Floaty(Mat(I, J)) /= 0.0 then return False; end if;
+	    J := J + 1;
+	 end loop;
+      end loop;
+      return True;
+   end;
+   
+   function Trisup(Mat : in TV_Str) return Boolean is
+      J : Positive;
+   begin
       for I in Mat'Range(1) loop
 	 J := 1;
-	 while J < I and J < Q loop
-	    if Floaty(Mat(I, J)) /= 0.0 then
-	       return False;
-	    end if;
+	 while J < I loop
+	    if Floaty(Mat(I, J)) /= 0.0 then return False; end if;
 	    J := J + 1;
 	 end loop;
       end loop;
@@ -114,13 +124,37 @@ package body P_Matrix is
       Affiche(Mat, Uni);
    end;
    
+   procedure UpPivot(Mat, Uni : out TV_Str; Piv : in positive) is
+      Coef : T_Str;
+      Useless : Boolean := True;
+   begin
+      A_La_Ligne;
+      for I in reverse 1..Piv loop
+	 if I /= Piv and Floaty(Mat(I, Piv)) /= 0.0 then
+	    Coef := Divide(Mat(I, Piv), Mat(Piv, Piv));
+	    for J in Piv..Mat'Last(2) loop
+	       CalcStr(Mat(I, J), Mat(Piv, J), Coef);
+	    end loop;
+	    for J in 1..Uni'Last(2) loop
+	       CalcStr(Uni(I, J), Uni(Piv, J), Coef);
+	    end loop;
+	    AfficheEtapes(Coef, I, Piv);
+	    Useless := False;
+	 end if;
+      end loop;
+      if not Useless then
+	 A_La_Ligne;
+	 Affiche(Mat, Uni);
+      end if;
+   end;
+   
    procedure DoPivot(Mat, Uni : out TV_Str; Piv : in positive) is
       Coef : T_Str;
       Useless : Boolean := True;
    begin
       A_La_Ligne;
       for I in Piv..Mat'last(1) loop
-	 if I /= Piv and Floaty(Mat(I, piv)) /= 0.0 then
+	 if I /= Piv and Floaty(Mat(I, Piv)) /= 0.0 then
 	    Coef := Divide(Mat(I, Piv), Mat(Piv, Piv));
 	    for J in Piv..Mat'Last(2) loop
 	       CalcStr(Mat(I, J), Mat(Piv, J), Coef);
@@ -153,14 +187,16 @@ package body P_Matrix is
    end;
    
    procedure Calcul(Mat, Uni : out TV_Str) is
-      I : Integer := 1;
+      I : Integer;
    begin
       A_La_Ligne;
       Ecrire_Ligne("Matrice de départ :");
       Affiche(Mat);
       A_La_Ligne;
       Affiche(Mat, Uni);
-      while I <= Mat'Length(2)-1 and then not (Trisup(Mat) and Diago(Mat)) loop
+      
+      I := 1;
+      while I <= Mat'Length(2) and then not (Trisup(Mat) and Diago(Mat)) loop
 	 if Floaty(Mat(I, I)) = 0.0 then
 	    GetCand(Mat, Uni, I);
 	    DoPivot(Mat, Uni, I);
@@ -169,12 +205,19 @@ package body P_Matrix is
 	 end if;
 	 I := I + 1;
       end loop;
+      
       if not RDiago(Mat) then
 	 A_La_Ligne;
 	 Ecrire_Ligne("La matrice n'est pas inversible !");
       else
 	 DiagToOne(Mat, Uni);
-	 -- suite
+	 
+	 I := Mat'Length(2);
+	 while I >= 1 and not Triinf(Mat) loop
+	    UpPivot(Mat, Uni, I);
+	    I := I - 1;
+	 end loop;
+	 
 	 A_La_Ligne;
 	 Ecrire_Ligne("Matrice inverse :");
 	 Affiche(Uni);
